@@ -2,6 +2,7 @@ package com.devcomentry.lib
 
 import android.os.Bundle
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.*
 import androidx.navigation.compose.ComposeNavigator
 
@@ -26,8 +27,8 @@ fun NavGraphBuilder.composable(
     var args = emptyList<NamedNavArgument>()
 
     arguments?.let {
-         route = screen.getRoute(arguments)
-         args = screen.getNavArgs(arguments)
+        route = screen.getRoute(arguments)
+        args = screen.getNavArgs(arguments)
     }
 
     addDestination(
@@ -41,4 +42,15 @@ fun NavGraphBuilder.composable(
             }
         }
     )
+}
+
+fun SavedStateHandle.get(argument: Argument): Argument {
+    val fields = argument.javaClass.declaredFields
+    for (field in fields) {
+        field.isAccessible = true
+        if (field.name != "\$stable") {
+            field.set(argument, this[field.name])
+        }
+    }
+    return argument
 }
