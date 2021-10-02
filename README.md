@@ -95,6 +95,26 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+### Step 4: Navigate to other screen
+- Example 1: just open Screen1
+```kotlin
+    navController.navigate(Screen.Screen1.route)
+```
+- Example 2: pass random number to Screen2
+```kotlin
+    navController.navigate(
+                        Screen.Screen2.setParam(
+                            Screen2Argument(
+                                Random.nextInt(
+                                    0,
+                                    50
+                                )
+                            )
+                        )
+                    )
+```
+
+
 ### Note
 - You can get Argument object from arguments (Instance of Bundle) like example above. Or get data from SavedStateHandle like this
 
