@@ -16,7 +16,7 @@ allprojects {
 }
 
 dependencies {
-	implementation 'com.github.doctor-blue:compose-navigation:1.0.0'
+	implementation 'com.github.doctor-blue:compose-navigation:1.1.0'
 }
 ```
 
@@ -44,6 +44,8 @@ data class Screen2Argument(val number: Int = -1) : Argument
 ```
 ### Step 3: Setup your navigation
 - Same as using navigation component, but at the composable function you can give  ComposeScreen and Argument object, let me help you with the rest.
+- Support get argument from Bundle or SavedStateHandle. If Bundle or SavedStateHandle object doen't contains key argument will be default of Argument object
+
 ```kotlin
 package com.devcomentry.composenavigation
 
@@ -56,7 +58,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.devcomentry.composenavigation.ui.screen.*
 import com.devcomentry.lib.composable
-import com.devcomentry.lib.getParamFromArg
+import com.devcomentry.lib.from
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,9 +85,10 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Screen.Screen2, Screen2Argument()) {
                             // get data from arguments
-                            Screen2(
-                                it.arguments?.getParamFromArg(Screen2Argument()) as Screen2Argument
-                            )
+                            it.arguments?.let {  bundle->
+                                val argument = Screen2Argument().from(bundle)
+                                Screen2(argument)
+                            }
                         }
 
                     }
@@ -116,12 +119,15 @@ class MainActivity : AppCompatActivity() {
 
 
 ### Note
-- You can get Argument object from arguments (Instance of Bundle) like example above. Or get data from SavedStateHandle like this
-
+- You can get Argument object from arguments (Instance of Bundle) like example above.
 ```kotlin
-    (savedStateHandle.get(Screen2Argument()) as Screen2Argument).let { arg ->
-        
-    }
+    val argument = Screen2Argument().from(bundle)
+    // use your argument
+```
+- Or get data from SavedStateHandle like this
+```kotlin
+    val argument = Screen2Argument().from(savedStateHandle)
+    // use your argument
 ```
 ## Want more an example?
 - See [Note app](https://github.com/doctor-blue/clean-architecture-jetpack-compose-note-app-android)
