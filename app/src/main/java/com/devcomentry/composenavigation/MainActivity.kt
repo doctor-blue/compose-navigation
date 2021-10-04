@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.devcomentry.composenavigation.ui.screen.*
 import com.devcomentry.lib.composable
-import com.devcomentry.lib.getParamFromArg
+import com.devcomentry.lib.from
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,9 +36,10 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Screen.Screen2, Screen2Argument()) {
                             // get data from arguments
-                            Screen2(
-                                it.arguments?.getParamFromArg(Screen2Argument()) as Screen2Argument
-                            )
+                            it.arguments?.let {  bundle->
+                                val argument = Screen2Argument().from(bundle)
+                                Screen2(argument)
+                            }
                         }
 
                     }

@@ -6,15 +6,26 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.*
 import androidx.navigation.compose.ComposeNavigator
 
-fun Bundle.getParamFromArg(argument: Argument): Argument {
-    val fields = argument.javaClass.declaredFields
+fun <T : Argument> T.from(bundle: Bundle): T {
+    val fields = this.javaClass.declaredFields
     for (field in fields) {
         field.isAccessible = true
-        if (field.name != "\$stable") {
-            field.set(argument, this[field.name])
+        if (field.name != "\$stable" && bundle.containsKey(field.name)) {
+            field.set(this, bundle[field.name])
         }
     }
-    return argument
+    return this
+}
+
+fun <T : Argument> T.from(state: SavedStateHandle): T {
+    val fields = this.javaClass.declaredFields
+    for (field in fields) {
+        field.isAccessible = true
+        if (field.name != "\$stable" && state.contains(field.name)) {
+            field.set(this, state[field.name])
+        }
+    }
+    return this
 }
 
 fun NavGraphBuilder.composable(
@@ -42,15 +53,4 @@ fun NavGraphBuilder.composable(
             }
         }
     )
-}
-
-fun SavedStateHandle.get(argument: Argument): Argument {
-    val fields = argument.javaClass.declaredFields
-    for (field in fields) {
-        field.isAccessible = true
-        if (field.name != "\$stable") {
-            field.set(argument, this[field.name])
-        }
-    }
-    return argument
 }
